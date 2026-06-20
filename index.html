@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BVBR6EGDG6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BVBR6EGDG6');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SpeedMeter | Connection Diagnostics</title>
+    <meta name="description" content="Instant high-precision internet speed testing with an elegant, modern interface.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#020617">
+    <link rel="apple-touch-icon" href="icon-512.png">
+
+    <!-- Manifest s verziovaním pre prebitie cache -->
+    <link rel="manifest" href="manifest.json?v=1.2">
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f2ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/%3E%3C/svg%3E">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --bg: #020617;
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-stroke: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            height: 100vh; height: 100dvh;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.1) 0%, transparent 40%);
+            display: flex; flex-direction: column;
+        }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.02; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: 10;
+        }
+
+        header { height: 50px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+        .logo {
+            font-size: 1.1rem; font-weight: 800; text-decoration: none; color: white;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .logo svg { width: 24px; height: 24px; stroke: var(--primary); filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.5)); }
+
+        main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 0 15px; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
+
+        .hero { text-align: center; margin: 5px 0 10px; flex-shrink: 0; }
+        .hero h1 { font-size: clamp(1.2rem, 3vh, 2.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.05em; background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.7)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .glass-stage {
+            position: relative; background: var(--glass); border: 1px solid var(--glass-stroke);
+            border-radius: 24px; padding: 12px 15px; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.6); margin-bottom: 10px; overflow: hidden;
+            flex: 1; display: flex; flex-direction: column; min-height: 0;
+        }
+
+        .meter-wrapper { flex: 1; width: 100%; border-radius: 16px; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 0; }
+        .meter-wrapper iframe { border: none; width: 100%; height: 100%; min-height: 280px; }
+
+        .meter-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; flex-shrink: 0; border-top: 1px solid var(--glass-stroke); }
+        .attribution { font-size: 0.75rem; color: var(--text-muted); }
+        .share-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-stroke); border-radius: 6px; color: var(--text-main); width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
+        .features { display: block; margin-bottom: 10px; flex-shrink: 0; }
+        .card { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-stroke); padding: 8px 15px; border-radius: 16px; text-align: center; }
+        .card h3 { font-size: 0.95rem; color: var(--text-main); display: inline-flex; align-items: center; gap: 6px; }
+        .card h3::before { content: ""; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
+
+        footer { text-align: center; padding: 5px 0 10px; color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; flex-shrink: 0; }
+
+        @media (max-width: 640px) { .features { display: none; } }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+            SpeedMeter
+        </a>
+    </header>
+
+    <main>
+        <section class="hero"><h1>Instant Internet Speed Test</h1></section>
+        <div class="glass-stage">
+            <div class="meter-wrapper">
+                <iframe src="https://www.metercustom.net/plugin/?hl=en" scrolling="no"></iframe>
+            </div>
+            <div class="meter-footer">
+                <div class="attribution">Provided by <a href="https://www.meter.net" target="_blank" style="color:var(--primary); text-decoration:none;">meter.net</a></div>
+                <button class="share-btn" onclick="share()" title="Share">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+                </button>
+            </div>
+        </div>
+        <section class="features"><div class="card"><h3>Connection Diagnostics</h3><p style="font-size: 0.8rem; color: var(--text-muted);">Real-time precision analytics</p></div></section>
+    </main>
+
+    <footer>&copy; 2026 SpeedMeter</footer>
+
+    <script>
+        // 1. REGISTRÁCIA SERVICE WORKERA (Dôležité pre PWA inštaláciu)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW Registered'))
+                    .catch(err => console.log('SW Failed', err));
+            });
+        }
+
+        // 2. FUNKCIA SHARE
+        function share() {
+            if (navigator.share) {
+                navigator.share({ title: 'SpeedMeter', text: 'Test your speed!', url: window.location.href });
+            } else {
+                alert("Sharing not supported on this browser.");
+            }
+        }
+
+        // 3. ANIMÁCIE
+        document.addEventListener('DOMContentLoaded', () => {
+            const el = document.querySelector('.glass-stage');
+            el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.8s ease-out';
+            setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 100);
+        });
+    </script>
+</body>
+</html>
